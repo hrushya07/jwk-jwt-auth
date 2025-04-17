@@ -58,7 +58,7 @@ func (j *JwkManager) GetAnyPrivateKeyWithKeyId() (*rsa.PrivateKey, string, error
 	}
 
 	// you can place your logic to fetch random key
-	// it could be as simple as randomInt from (0 - j.jwkSet.Len() - 1)
+	// it could be as simple as randomInt from (0 to j.jwkSet.Len() - 1)
 	key, foundKey := j.jwkSet.Key(0)
 	if !foundKey {
 		return nil, "", fmt.Errorf("key not found in JWK set")
