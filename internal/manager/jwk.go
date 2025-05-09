@@ -9,7 +9,7 @@ import (
 	"github.com/lestrrat-go/jwx/v3/jwk"
 )
 
-type IJwkManager interface {
+type JwkManager interface {
 	InitializeJwkSet(noOfKeys int) error
 	GetAnyPrivateKeyWithKeyId() (*rsa.PrivateKey, string, error)
 	GetPublicKeyBy(keyId string) (*rsa.PublicKey, error)
@@ -20,7 +20,7 @@ type jwkManager struct {
 	jwkSet jwk.Set
 }
 
-func NewJwkManager() IJwkManager {
+func NewJwkManager() JwkManager {
 	return &jwkManager{}
 }
 

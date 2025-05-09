@@ -9,16 +9,16 @@ import (
 	"time"
 )
 
-type IJwtManager interface {
+type JwtManager interface {
 	GenerateToken(claims map[string]interface{}) (string, error)
 	VerifyTokenSignatureAndGetClaims(jwtToken string) (map[string]interface{}, error)
 }
 
 type jwtManager struct {
-	jwkManager IJwkManager
+	jwkManager JwkManager
 }
 
-func NewJwtManager(jwkManager IJwkManager) IJwtManager {
+func NewJwtManager(jwkManager JwkManager) JwtManager {
 	return &jwtManager{
 		jwkManager: jwkManager,
 	}

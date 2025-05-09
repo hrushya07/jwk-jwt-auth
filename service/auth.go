@@ -7,18 +7,18 @@ import (
 	"jwk-jwt-auth/model"
 )
 
-type IAuthService interface {
+type AuthService interface {
 	GenerateJwt(user *model.User) (string, error)
 	GetPublicKeys() ([]*rsa.PublicKey, error)
 	VerifyToken(token string) (*model.User, error)
 }
 
 type authService struct {
-	jwtManager manager.IJwtManager
-	jwkManager manager.IJwkManager
+	jwtManager manager.JwtManager
+	jwkManager manager.JwkManager
 }
 
-func NewAuthService(jwtManager manager.IJwtManager, jwkManager manager.IJwkManager) IAuthService {
+func NewAuthService(jwtManager manager.JwtManager, jwkManager manager.JwkManager) AuthService {
 	return &authService{
 		jwtManager: jwtManager,
 		jwkManager: jwkManager,
