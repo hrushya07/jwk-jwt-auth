@@ -16,15 +16,15 @@ type IJwkManager interface {
 	GetPublicKeys() ([]*rsa.PublicKey, error)
 }
 
-type JwkManager struct {
+type jwkManager struct {
 	jwkSet jwk.Set
 }
 
 func NewJwkManager() IJwkManager {
-	return &JwkManager{}
+	return &jwkManager{}
 }
 
-func (j *JwkManager) InitializeJwkSet(noOfKeys int) error {
+func (j *jwkManager) InitializeJwkSet(noOfKeys int) error {
 	set := jwk.NewSet()
 
 	for i := 0; i < noOfKeys; i++ {
@@ -52,7 +52,7 @@ func (j *JwkManager) InitializeJwkSet(noOfKeys int) error {
 	return nil
 }
 
-func (j *JwkManager) GetAnyPrivateKeyWithKeyId() (*rsa.PrivateKey, string, error) {
+func (j *jwkManager) GetAnyPrivateKeyWithKeyId() (*rsa.PrivateKey, string, error) {
 	if j.jwkSet == nil || j.jwkSet.Len() == 0 {
 		return nil, "", fmt.Errorf("JWK set is empty or not initialized")
 	}
@@ -77,7 +77,7 @@ func (j *JwkManager) GetAnyPrivateKeyWithKeyId() (*rsa.PrivateKey, string, error
 	return &rsaPrivateKey, kid, nil
 }
 
-func (j *JwkManager) GetPublicKeyBy(keyId string) (*rsa.PublicKey, error) {
+func (j *jwkManager) GetPublicKeyBy(keyId string) (*rsa.PublicKey, error) {
 	if j.jwkSet == nil {
 		return nil, errors.New("JWK set not initialized")
 	}
@@ -95,7 +95,7 @@ func (j *JwkManager) GetPublicKeyBy(keyId string) (*rsa.PublicKey, error) {
 	return &rsaPrivateKey.PublicKey, nil
 }
 
-func (j *JwkManager) GetPublicKeys() ([]*rsa.PublicKey, error) {
+func (j *jwkManager) GetPublicKeys() ([]*rsa.PublicKey, error) {
 	if j.jwkSet == nil || j.jwkSet.Len() == 0 {
 		return nil, errors.New("JWK set is empty or not initialized")
 	}

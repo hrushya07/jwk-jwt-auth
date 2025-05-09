@@ -14,17 +14,17 @@ type IJwtManager interface {
 	VerifyTokenSignatureAndGetClaims(jwtToken string) (map[string]interface{}, error)
 }
 
-type JwtManager struct {
+type jwtManager struct {
 	jwkManager IJwkManager
 }
 
 func NewJwtManager(jwkManager IJwkManager) IJwtManager {
-	return &JwtManager{
+	return &jwtManager{
 		jwkManager: jwkManager,
 	}
 }
 
-func (j *JwtManager) GenerateToken(claims map[string]interface{}) (string, error) {
+func (j *jwtManager) GenerateToken(claims map[string]interface{}) (string, error) {
 	token := jwt.New()
 
 	var currentTime = time.Now()
@@ -58,7 +58,7 @@ func (j *JwtManager) GenerateToken(claims map[string]interface{}) (string, error
 	return string(signedToken), nil
 }
 
-func (j *JwtManager) VerifyTokenSignatureAndGetClaims(jwtToken string) (map[string]interface{}, error) {
+func (j *jwtManager) VerifyTokenSignatureAndGetClaims(jwtToken string) (map[string]interface{}, error) {
 	parsedToken, err := jws.Parse([]byte(jwtToken))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse JWT: %w", err)
