@@ -64,14 +64,9 @@ func (j *JwkManager) GetAnyPrivateKeyWithKeyId() (*rsa.PrivateKey, string, error
 		return nil, "", fmt.Errorf("key not found in JWK set")
 	}
 
-	var rawKey interface{}
-	if err := jwk.Export(key, &rawKey); err != nil {
+	var rsaPrivateKey rsa.PrivateKey
+	if err := jwk.Export(key, &rsaPrivateKey); err != nil {
 		return nil, "", fmt.Errorf("failed to export raw key: %w", err)
-	}
-
-	rsaPrivateKey, ok := rawKey.(*rsa.PrivateKey)
-	if !ok {
-		return nil, "", fmt.Errorf("exported key is not an RSA private key")
 	}
 
 	var kid string
@@ -79,7 +74,7 @@ func (j *JwkManager) GetAnyPrivateKeyWithKeyId() (*rsa.PrivateKey, string, error
 		return nil, "", fmt.Errorf("failed to get kid: %w", err)
 	}
 
-	return rsaPrivateKey, kid, nil
+	return &rsaPrivateKey, kid, nil
 }
 
 func (j *JwkManager) GetPublicKeyBy(keyId string) (*rsa.PublicKey, error) {
@@ -92,14 +87,9 @@ func (j *JwkManager) GetPublicKeyBy(keyId string) (*rsa.PublicKey, error) {
 		return nil, fmt.Errorf("no key found with kid: %s", keyId)
 	}
 
-	var rawKey interface{}
-	if err := jwk.Export(key, &rawKey); err != nil {
+	var rsaPrivateKey rsa.PrivateKey
+	if err := jwk.Export(key, &rsaPrivateKey); err != nil {
 		return nil, fmt.Errorf("failed to export raw key: %w", err)
-	}
-
-	rsaPrivateKey, ok := rawKey.(*rsa.PrivateKey)
-	if !ok {
-		return nil, fmt.Errorf("exported key is not an RSA private key")
 	}
 
 	return &rsaPrivateKey.PublicKey, nil
