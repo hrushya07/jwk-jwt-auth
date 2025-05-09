@@ -7,34 +7,34 @@ import (
 	"jwk-jwt-auth/model"
 )
 
-type IAuthService interface {
+type AuthService interface {
 	GenerateJwt(user *model.User) (string, error)
 	GetPublicKeys() ([]*rsa.PublicKey, error)
 	VerifyToken(token string) (*model.User, error)
 }
 
-type AuthService struct {
-	jwtManager manager.IJwtManager
-	jwkManager manager.IJwkManager
+type authService struct {
+	jwtManager manager.JwtManager
+	jwkManager manager.JwkManager
 }
 
-func NewAuthService(jwtManager manager.IJwtManager, jwkManager manager.IJwkManager) IAuthService {
-	return &AuthService{
+func NewAuthService(jwtManager manager.JwtManager, jwkManager manager.JwkManager) AuthService {
+	return &authService{
 		jwtManager: jwtManager,
 		jwkManager: jwkManager,
 	}
 }
 
-func (a *AuthService) GenerateJwt(user *model.User) (string, error) {
+func (a *authService) GenerateJwt(user *model.User) (string, error) {
 	var userAsMap = user.ToMap()
 	return a.jwtManager.GenerateToken(userAsMap)
 }
 
-func (a *AuthService) GetPublicKeys() ([]*rsa.PublicKey, error) {
+func (a *authService) GetPublicKeys() ([]*rsa.PublicKey, error) {
 	return a.jwkManager.GetPublicKeys()
 }
 
-func (a *AuthService) VerifyToken(token string) (*model.User, error) {
+func (a *authService) VerifyToken(token string) (*model.User, error) {
 	claimsInMap, errVerifyingSignature := a.jwtManager.VerifyTokenSignatureAndGetClaims(token)
 	if errVerifyingSignature != nil {
 		return nil, errVerifyingSignature

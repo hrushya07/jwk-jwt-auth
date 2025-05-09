@@ -9,22 +9,22 @@ import (
 	"time"
 )
 
-type IJwtManager interface {
+type JwtManager interface {
 	GenerateToken(claims map[string]interface{}) (string, error)
 	VerifyTokenSignatureAndGetClaims(jwtToken string) (map[string]interface{}, error)
 }
 
-type JwtManager struct {
-	jwkManager IJwkManager
+type jwtManager struct {
+	jwkManager JwkManager
 }
 
-func NewJwtManager(jwkManager IJwkManager) IJwtManager {
-	return &JwtManager{
+func NewJwtManager(jwkManager JwkManager) JwtManager {
+	return &jwtManager{
 		jwkManager: jwkManager,
 	}
 }
 
-func (j *JwtManager) GenerateToken(claims map[string]interface{}) (string, error) {
+func (j *jwtManager) GenerateToken(claims map[string]interface{}) (string, error) {
 	token := jwt.New()
 
 	var currentTime = time.Now()
@@ -58,7 +58,7 @@ func (j *JwtManager) GenerateToken(claims map[string]interface{}) (string, error
 	return string(signedToken), nil
 }
 
-func (j *JwtManager) VerifyTokenSignatureAndGetClaims(jwtToken string) (map[string]interface{}, error) {
+func (j *jwtManager) VerifyTokenSignatureAndGetClaims(jwtToken string) (map[string]interface{}, error) {
 	parsedToken, err := jws.Parse([]byte(jwtToken))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse JWT: %w", err)

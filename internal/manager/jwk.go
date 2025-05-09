@@ -9,22 +9,22 @@ import (
 	"github.com/lestrrat-go/jwx/v3/jwk"
 )
 
-type IJwkManager interface {
+type JwkManager interface {
 	InitializeJwkSet(noOfKeys int) error
 	GetAnyPrivateKeyWithKeyId() (*rsa.PrivateKey, string, error)
 	GetPublicKeyBy(keyId string) (*rsa.PublicKey, error)
 	GetPublicKeys() ([]*rsa.PublicKey, error)
 }
 
-type JwkManager struct {
+type jwkManager struct {
 	jwkSet jwk.Set
 }
 
-func NewJwkManager() IJwkManager {
-	return &JwkManager{}
+func NewJwkManager() JwkManager {
+	return &jwkManager{}
 }
 
-func (j *JwkManager) InitializeJwkSet(noOfKeys int) error {
+func (j *jwkManager) InitializeJwkSet(noOfKeys int) error {
 	set := jwk.NewSet()
 
 	for i := 0; i < noOfKeys; i++ {
@@ -52,7 +52,7 @@ func (j *JwkManager) InitializeJwkSet(noOfKeys int) error {
 	return nil
 }
 
-func (j *JwkManager) GetAnyPrivateKeyWithKeyId() (*rsa.PrivateKey, string, error) {
+func (j *jwkManager) GetAnyPrivateKeyWithKeyId() (*rsa.PrivateKey, string, error) {
 	if j.jwkSet == nil || j.jwkSet.Len() == 0 {
 		return nil, "", fmt.Errorf("JWK set is empty or not initialized")
 	}
@@ -64,14 +64,9 @@ func (j *JwkManager) GetAnyPrivateKeyWithKeyId() (*rsa.PrivateKey, string, error
 		return nil, "", fmt.Errorf("key not found in JWK set")
 	}
 
-	var rawKey interface{}
-	if err := jwk.Export(key, &rawKey); err != nil {
+	var rsaPrivateKey rsa.PrivateKey
+	if err := jwk.Export(key, &rsaPrivateKey); err != nil {
 		return nil, "", fmt.Errorf("failed to export raw key: %w", err)
-	}
-
-	rsaPrivateKey, ok := rawKey.(*rsa.PrivateKey)
-	if !ok {
-		return nil, "", fmt.Errorf("exported key is not an RSA private key")
 	}
 
 	var kid string
@@ -79,10 +74,10 @@ func (j *JwkManager) GetAnyPrivateKeyWithKeyId() (*rsa.PrivateKey, string, error
 		return nil, "", fmt.Errorf("failed to get kid: %w", err)
 	}
 
-	return rsaPrivateKey, kid, nil
+	return &rsaPrivateKey, kid, nil
 }
 
-func (j *JwkManager) GetPublicKeyBy(keyId string) (*rsa.PublicKey, error) {
+func (j *jwkManager) GetPublicKeyBy(keyId string) (*rsa.PublicKey, error) {
 	if j.jwkSet == nil {
 		return nil, errors.New("JWK set not initialized")
 	}
@@ -92,20 +87,15 @@ func (j *JwkManager) GetPublicKeyBy(keyId string) (*rsa.PublicKey, error) {
 		return nil, fmt.Errorf("no key found with kid: %s", keyId)
 	}
 
-	var rawKey interface{}
-	if err := jwk.Export(key, &rawKey); err != nil {
+	var rsaPrivateKey rsa.PrivateKey
+	if err := jwk.Export(key, &rsaPrivateKey); err != nil {
 		return nil, fmt.Errorf("failed to export raw key: %w", err)
-	}
-
-	rsaPrivateKey, ok := rawKey.(*rsa.PrivateKey)
-	if !ok {
-		return nil, fmt.Errorf("exported key is not an RSA private key")
 	}
 
 	return &rsaPrivateKey.PublicKey, nil
 }
 
-func (j *JwkManager) GetPublicKeys() ([]*rsa.PublicKey, error) {
+func (j *jwkManager) GetPublicKeys() ([]*rsa.PublicKey, error) {
 	if j.jwkSet == nil || j.jwkSet.Len() == 0 {
 		return nil, errors.New("JWK set is empty or not initialized")
 	}

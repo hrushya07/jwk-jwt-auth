@@ -65,7 +65,7 @@ func runMenu(cmd *cobra.Command, args []string) {
 	}
 }
 
-func generateTokenInteractive(authService service.IAuthService, reader *bufio.Reader) {
+func generateTokenInteractive(authService service.AuthService, reader *bufio.Reader) {
 	fmt.Print("Enter user ID: ")
 	userId, errReadingUserIdInput := reader.ReadString('\n')
 	if errReadingUserIdInput != nil {
@@ -101,7 +101,7 @@ func generateTokenInteractive(authService service.IAuthService, reader *bufio.Re
 	fmt.Printf("\nGenerated Token: %s\n", token)
 }
 
-func getJWKSInteractive(authService service.IAuthService) {
+func getJWKSInteractive(authService service.AuthService) {
 	jwks, err := authService.GetPublicKeys()
 	if err != nil {
 		fmt.Printf("Error getting JWKS: %v\n", err)
@@ -117,7 +117,7 @@ func getJWKSInteractive(authService service.IAuthService) {
 	fmt.Printf("\nPublic JWKS: %+v\n", string(bytes))
 }
 
-func verifyTokenInteractive(authService service.IAuthService, reader *bufio.Reader) {
+func verifyTokenInteractive(authService service.AuthService, reader *bufio.Reader) {
 	fmt.Print("Enter JWT token: ")
 	token, _ := reader.ReadString('\n')
 	token = strings.TrimSpace(token)
