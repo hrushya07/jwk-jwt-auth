@@ -25,16 +25,16 @@ func NewAuthService(jwtManager manager.JwtManager, jwkManager manager.JwkManager
 	}
 }
 
-func (a *authService) GenerateJwt(user *model.User) (string, error) {
+func (a authService) GenerateJwt(user *model.User) (string, error) {
 	var userAsMap = user.ToMap()
 	return a.jwtManager.GenerateToken(userAsMap)
 }
 
-func (a *authService) GetPublicKeys() ([]*rsa.PublicKey, error) {
+func (a authService) GetPublicKeys() ([]*rsa.PublicKey, error) {
 	return a.jwkManager.GetPublicKeys()
 }
 
-func (a *authService) VerifyToken(token string) (*model.User, error) {
+func (a authService) VerifyToken(token string) (*model.User, error) {
 	claimsInMap, errVerifyingSignature := a.jwtManager.VerifyTokenSignatureAndGetClaims(token)
 	if errVerifyingSignature != nil {
 		return nil, errVerifyingSignature
