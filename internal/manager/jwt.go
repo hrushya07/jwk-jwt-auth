@@ -3,10 +3,11 @@ package manager
 import (
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/lestrrat-go/jwx/v3/jwa"
 	"github.com/lestrrat-go/jwx/v3/jws"
 	"github.com/lestrrat-go/jwx/v3/jwt"
-	"time"
 )
 
 type JwtManager interface {
@@ -24,7 +25,7 @@ func NewJwtManager(jwkManager JwkManager) JwtManager {
 	}
 }
 
-func (j *jwtManager) GenerateToken(claims map[string]interface{}) (string, error) {
+func (j jwtManager) GenerateToken(claims map[string]interface{}) (string, error) {
 	token := jwt.New()
 
 	var currentTime = time.Now()
@@ -58,7 +59,7 @@ func (j *jwtManager) GenerateToken(claims map[string]interface{}) (string, error
 	return string(signedToken), nil
 }
 
-func (j *jwtManager) VerifyTokenSignatureAndGetClaims(jwtToken string) (map[string]interface{}, error) {
+func (j jwtManager) VerifyTokenSignatureAndGetClaims(jwtToken string) (map[string]interface{}, error) {
 	parsedToken, err := jws.Parse([]byte(jwtToken))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse JWT: %w", err)
