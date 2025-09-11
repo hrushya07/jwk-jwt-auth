@@ -1,5 +1,7 @@
 # JWT Auth Service (with JWKS)
 
+📖 Read the full blog post on Medium: [JWT Auth with JWKS in Go](https://medium.com/techverito/secure-jwt-authentication-in-go-using-jwks-cba89d442f77)
+
 This is a Go-based authentication service that implements JWT token validation using JWKS (JSON Web Key Set). It utilizes the [`lestrrat-go/jwx`](https://github.com/lestrrat-go/jwx/v3) package for working with JWTs and JWKS, and [`cobra`](https://github.com/spf13/cobra) for building a CLI interface.
 
 ## Features
